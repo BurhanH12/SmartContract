@@ -13,7 +13,7 @@ contract New {
 
     //to declare the owner of the contract
     address Owner;
-    constructor() public{
+    constructor(){
         Owner = msg.sender;
 }
 
@@ -74,17 +74,15 @@ function IntAssignment (int incomingValue) public
 
 //Understanding Booleans
 
-bool ispaid = false;
+mapping(address => bool) public ispaid;
 
-function changepay(address employee) public OnlyOwner {
-    require(ispaid == false, "already paid");
-    ispaid = true;
+function changepay(address _employee) public OnlyOwner {
+    require(ispaid[_employee] == false, "already paid");
+    ispaid[_employee] = true;
 }
 
-function checkpay(address employee) public view returns(bool) {
-    return ispaid;
+function checkpay(address _employee) public view returns(bool) {
+    return ispaid[_employee];
 }
-
-
 
 }
