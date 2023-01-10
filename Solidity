@@ -85,4 +85,29 @@ function checkpay(address _employee) public view returns(bool) {
     return ispaid[_employee];
 }
 
+
+//understanding Arrays
+
+//fixed array
+
+uint256[] private weight;
+
+//function to add elements inside and arary
+function addinarray(uint256 _weight) public OnlyOwner{
+    weight.push(_weight); //append elements in the array
+}
+
+//function to check the elements inside the array
+function checkarray() public view returns(uint256[] memory){
+    return weight;
+}
+
+//function to delete elements from the array which can only be called by the owner
+function removefromarray() public OnlyOwner {  
+        require(weight.length != 0, "Array is already empty."); //check if the array is empty
+        weight.pop();
+    }
+
+
+
 }
