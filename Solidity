@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import "hardhat/console.sol";
+
 contract New {
 
     string private statevariable = "Hello World"; //state variables are stored as Storage by default
@@ -19,6 +21,7 @@ contract New {
         require(msg.sender == Owner, "Only the contract owner can call this function.");
     _;
 }
+
     string name;
     uint256 age;
     uint256 number;
@@ -33,7 +36,7 @@ contract New {
 
     }
 
-
+//the function takes the given data structures as input
 function getinfo(string memory _name, uint256 _age, uint256 _number) public {
     name = _name;
     age = _age;
@@ -41,9 +44,47 @@ function getinfo(string memory _name, uint256 _age, uint256 _number) public {
 
 }
 
+//The function returns the value provided in the above function. It can only be called by the owner
 function display() public view OnlyOwner returns (string memory, uint256, uint256){
     return(name, age, number);
 
 }
+
+//Difference between signed and unsigned integer
+
+/*
+function UintAssignment(uint256 incomingValue) public {
+    uint memoryuint = 256;
+    uint256 memoryuint256 = 256;
+    uint8 memoruint8 = 8; //can store value from 0 up to 255
+
+    //adds two uint8
+    uint256 resuslt = memoryuint + memoruint8;
+
+}
+
+function IntAssignment (int incomingValue) public
+{
+    int memoryInt = 256;
+    int256 memoryInt256 = 256;
+    int8 memoryInt8 = 8; //can store value from -128 to 127
+}
+
+*/
+
+//Understanding Booleans
+
+bool ispaid = false;
+
+function changepay(address employee) public OnlyOwner {
+    require(ispaid == false, "already paid");
+    ispaid = true;
+}
+
+function checkpay(address employee) public view returns(bool) {
+    return ispaid;
+}
+
+
 
 }
