@@ -1,0 +1,49 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract New {
+
+    string private statevariable = "Hello World"; //state variables are stored as Storage by default
+    function GetHelloWorld() public view returns (string memory) {  //memory is a temporary storage structure
+
+        return statevariable;
+    }
+
+    //to declare the owner of the contract
+    address Owner;
+    constructor() public{
+        Owner = msg.sender;
+}
+
+    modifier OnlyOwner {
+        require(msg.sender == Owner, "Only the contract owner can call this function.");
+    _;
+}
+    string name;
+    uint256 age;
+    uint256 number;
+
+
+    //A structure is a user defined data structure
+    struct information {
+        string name;
+        uint256 age;
+        uint256 number;
+        bool ismarried;
+
+    }
+
+
+function getinfo(string memory _name, uint256 _age, uint256 _number) public {
+    name = _name;
+    age = _age;
+    number = _number;
+
+}
+
+function display() public view OnlyOwner returns (string memory, uint256, uint256){
+    return(name, age, number);
+
+}
+
+}
