@@ -1,0 +1,60 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract payame {
+    mapping(address => uint256) balance;
+
+    address Owner;
+    //uint256 public totalSupply = 1000000;
+    //address trash = address(0);
+    uint256 marketingFee = 5;
+    constructor(){
+        Owner = msg.sender;
+        //balance[msg.sender] = totalSupply;
+    }
+
+    modifier OnlyOwner {
+        require(msg.sender == Owner, "You're not the owner");
+        _;
+    }
+
+    function addFunds() public OnlyOwner payable {
+        require(msg.value > 0, "You must send a positive value");
+        balance[address(this)] += msg.value;
+    }
+
+    function gift(address receiver) public OnlyOwner payable{
+    require(receiver != address(0), "Invalid receiver address");
+    require(balance[address(this)] > 0, "Contract has no balance to send");
+    balance[receiver] += balance[address(this)];
+    balance[address(this)] = 0;
+    
+}
+
+    function transfer(address receiver) public payable {
+        require(balance[address(msg.sender)] != 0, "Insuffiecient funds");
+        require(msg.value < balance[address(msg.sender)], "value is greater than the balance");
+        uint256 marketingamount = msg.value * marketingFee / (100);
+        uint256 netvalue =  msg.value - marketingamount;
+        balance[receiver] += netvalue;
+        balance[msg.sender] -= msg.value;
+        balance[Owner] += marketingamount;
+        
+    }
+
+    
+
+  function checkbal(address _address) public view returns (uint256) {
+    return balance[_address];
+}
+
+  
+}
+
+
+
+// //What this contract does
+// 1) The 'Add funds' function allows the owner to send a value in realmoney into the smart contract address
+// 2) The 'Gift' function lets the owner to transfer all the funds inside the contract address to a particular address
+// 3) The transfer function is a public function that allows the user to send a value to another address BUT when the user calls the function a 5% fee is deducted from his amount and is sent to the owener address
+
