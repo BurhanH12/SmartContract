@@ -153,7 +153,17 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
     function _afterTokenTransfer(address from, address to, uint256 amount) internal virtual {}
 }
 
+contract Token2 is ERC20 {
+    constructor() ERC20("CourseToken", "CsT") {
+    }
+uint256 public counter = 0;
+    function mint() external{
+        _mint(msg.sender, 1);
+        counter++;
+    }
 
+    
+}
 contract Token is ERC20 {
     constructor() ERC20("QToken", "QTKN") {
          _mint(msg.sender, 1000000 * 10 ** decimals());
@@ -161,3 +171,4 @@ contract Token is ERC20 {
    
 
 }
+
