@@ -162,6 +162,11 @@ uint256 public counter = 0;
         counter++;
     }
 
+    function burn() external {
+        _burn(msg.sender, 1);
+        
+    }
+
     
 }
 contract Token is ERC20 {

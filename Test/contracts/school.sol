@@ -9,7 +9,7 @@ contract School is Ownable{
 
 
     uint256 baseTermS = 10;
-    uint16 public tax = 3;
+    uint public constant tax = 3;
     uint256 price = 1000;
     uint256 public numberoftokens;
 //  uint256 baseTermT;
@@ -18,14 +18,16 @@ contract School is Ownable{
     IERC20 token;
     Token2 public t2;
     CourseNFT public cft;
+    QCertificate public Qctf;
     
    
 
-    constructor(IERC20 _token, address _nft){
+    constructor(IERC20 _token, address _nft, address _token2, address _cert){
         Owner = msg.sender;
         token = _token;
-        t2 = new Token2();
+        t2 = Token2(_token2);
         cft =  CourseNFT(_nft);
+        Qctf = QCertificate(_cert);
         }
 
     modifier OnlyOwner {
@@ -68,8 +70,9 @@ contract School is Ownable{
 
 
     function buyTokens() public payable {
+       // require(msg.value >= 1 ether, "Cannot buy less than 1 Ether");
         numberoftokens = msg.value * price;
-        token.transferFrom(Owner,msg.sender,numberoftokens);     //This Line gives an Error when passing msg.value as Ether
+        token.transferFrom(Owner,msg.sender,numberoftokens);     
         student[msg.sender] = true;  
 
     }   
@@ -81,36 +84,53 @@ contract School is Ownable{
 
     function addCourse(uint256 _courseID, string memory _courseName, address _teacher, uint256 _baseTermT, uint256 _baseprice) public isTeacher{
         require(courses[_courseID].courseregistered == false, "Course already registered");
-        require(_baseTermT <= baseTermS, "Base Term cannot be more than base term set by school");
+        require(baseTermS<=100-_baseTermT,"Base term should be greater than school terms");
         courses[_courseID] = Course(_courseID, _courseName, _teacher, true, _baseTermT, _baseprice);
-        courseprice[_courseID] = calulatePercent(_baseprice, _baseTermT);
-        cft.Mint(_teacher, _courseName);    //Mint function is not being called because of wrong implementation
+        courseprice[_courseID] = calcCP(_baseprice, _baseTermT);
+        cft.Mint(_teacher, _courseName); 
     }   
 
-    function graduate(address _student /*, uint256 _CourseID */) public isTeacher {
-        require(student[_student] = true, "The address is not a student");
-    }
-
-
+    
     function buyCourse(uint256 _courseId) public {
         require(courses[_courseId].courseregistered == true, "Not a valid course ID");
+        require(token.balanceOf(msg.sender) >= courseprice[_courseId], "Not enough funds");
         //require(balanceOf(msg.sender) >= courseprice, "Not enough tokens");
-        token.transfer(address(Owner), price);
+        token.transferFrom(msg.sender,address(Owner), courseprice[_courseId]);
         t2.mint();
         studentenroll[t2.counter()][_courseId]=msg.sender;
     }
 
-    function calulatePercent(uint256 base, uint256 share) pure public returns (uint256) {
-        return(base + share);
+
+    function graduate(address _student , uint256 _courseid ) public isTeacher {
+        require(student[_student] = true, "The address is not a student");
+        require(studentenroll[t2.counter()][_courseid] == _student, "The student is not enrolled in this course");
+        Qctf.mint(msg.sender);
+        t2.burn();
+        
     }
 
+    function calulatePercent(uint base, uint share) pure private returns (uint) {
+        return(base * 100) / share;
     }
+
+    function calcCP(uint _baseprice, uint _shareT) pure private returns (uint) {
+        return(calulatePercent(_baseprice,_shareT) + calcTax(calulatePercent(_baseprice,_shareT)));
+        
+    }
+
+    function calcTax(uint amount) pure private returns (uint) {
+        return amount * tax / 100;
+        
+    }
+
+    function ViewPrice(uint256 _ID) public view returns(uint256) {
+         return courseprice[_ID];
+    }
+}
 
 
 /*
     //ERRORS THAT I'M WORKING ON
-    1) to access the variable from the addcourse function & the struct for calculation
-    2) To make another nft as certificate and mint it at the time of student graduating 
-    3) The token.transfer line above gives an error
+    1) N/A
 
     */

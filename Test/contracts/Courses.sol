@@ -41,5 +41,16 @@ contract CourseNFT is ERC721, ERC721URIStorage, Ownable {
         returns (string memory)
     {
         return super.tokenURI(tokenId);
+    }   
+}
+
+contract QCertificate is ERC721, Ownable{
+    uint256 public id = 0;
+    constructor() ERC721 ("QCertificate","QCTF"){
+
+    }
+function mint (address _to)  external {
+        id += 1;
+        _safeMint(_to, id);
     }
 }
