@@ -161,13 +161,10 @@ uint256 public counter = 0;
         _mint(msg.sender, 1);
         counter++;
     }
-
     function burn() external {
-        _burn(msg.sender, 1);
+        _burn(msg.sender,1);
         
-    }
-
-    
+    } 
 }
 contract Token is ERC20 {
     constructor() ERC20("QToken", "QTKN") {

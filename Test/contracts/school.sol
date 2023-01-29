@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
 
-
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "./Courses.sol";
 import "./Token.sol";
 
@@ -64,6 +64,13 @@ contract School is Ownable{
         bool registered;
     }
 
+    //Events
+    event TeacherAdded(address indexed teacher);
+    event CourseAdded(address indexed teacher,uint256 CourseID, string CourseName, uint256 price);
+    event Enrolled(address indexed student, uint256 CourseID);
+    event Graduated(address indexed student, uint256 CourseID);
+
+
     function setBaseTerm(uint256 _baseTerm) public OnlyOwner {
         baseTermS = _baseTerm; 
     }
@@ -80,6 +87,7 @@ contract School is Ownable{
     function addTeacher(address _address, string memory _name, uint256 _Id) public OnlyOwner{
         require(teachers[_address].registered == false, "Teacher already registered");
         teachers[_address] = Teacher(_name, _Id, true);
+        emit TeacherAdded(_address);
     }
 
     function addCourse(uint256 _courseID, string memory _courseName, address _teacher, uint256 _baseTermT, uint256 _baseprice) public isTeacher{
@@ -88,6 +96,7 @@ contract School is Ownable{
         courses[_courseID] = Course(_courseID, _courseName, _teacher, true, _baseTermT, _baseprice);
         courseprice[_courseID] = calcCP(_baseprice, _baseTermT);
         cft.Mint(_teacher, _courseName); 
+        emit CourseAdded(_teacher, _courseID, _courseName, _baseprice);
     }   
 
     
@@ -98,6 +107,7 @@ contract School is Ownable{
         token.transferFrom(msg.sender,address(Owner), courseprice[_courseId]);
         t2.mint();
         studentenroll[t2.counter()][_courseId]=msg.sender;
+        emit Enrolled(msg.sender, _courseId);
     }
 
 
@@ -106,6 +116,7 @@ contract School is Ownable{
         require(studentenroll[t2.counter()][_courseid] == _student, "The student is not enrolled in this course");
         Qctf.mint(msg.sender);
         t2.burn();
+        emit Graduated(_student, _courseid);
         
     }
 
