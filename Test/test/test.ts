@@ -14,8 +14,24 @@ describe ("School",  function () {
         
         const token = await ethers.getContractFactory("Token");
         const deploytoken = await token.deploy();
+        console.log("QTKN Address : ",deploytoken.address);
 
-        console.log("TOkenAdd : ",deploytoken.address)
+        const token2 = await ethers.getContractFactory("Token2");
+        const deploytoken2 = await token2.deploy();
+        console.log("StudentToken Address : ",deploytoken2.address);
+
+        const CourseNft = await ethers.getContractFactory("CourseNFT");
+        const deployCourseNft = await CourseNft.deploy();
+        console.log("Course NFT Address : ",deployCourseNft.address);
+
+        const CertNft = await ethers.getContractFactory("CourseNFT");
+        const deploycertnft = await CertNft.deploy();
+        console.log("Certificate NFT Address : ",deploycertnft.address);
+
+        const Contract = await ethers.getContractFactory("School");
+        const contract =await Contract.deploy(deploytoken.address, deploytoken2.address, deployCourseNft.address, deploycertnft.address);
+        console.log("School Address : ",contract.address);
+
     });
     
     
