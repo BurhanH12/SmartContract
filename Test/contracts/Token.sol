@@ -157,12 +157,12 @@ contract Token2 is ERC20 {
     constructor() ERC20("CourseToken", "CsT") {
     }
 uint256 public counter = 0;
-    function mint() external{
-        _mint(msg.sender, 1);
+    function mint(address to) external{
+        _mint(to, 1);
         counter++;
     }
-    function burn() external {
-        _burn(msg.sender,1);
+    function burn(address to) external {
+        _burn(to,1);
         
     } 
 }

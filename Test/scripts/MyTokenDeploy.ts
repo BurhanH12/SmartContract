@@ -1,8 +1,9 @@
 import { ethers } from "hardhat";
 import { Token, Token__factory } from "../typechain-types"
+import { schoolSol } from "../typechain-types/contracts";
 
 async function main() {
-  const { deploy } = deployments;
+  const { deploy } = School;
   const { deployer } = await getNamedAccounts();
   
   const contract = await deploy("Token", { from: deployer });

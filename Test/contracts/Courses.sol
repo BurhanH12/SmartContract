@@ -17,7 +17,7 @@ contract CourseNFT is ERC721, ERC721URIStorage, Ownable {
     constructor() ERC721("Courses", "Qcourse") {}
 
     function _baseURI() internal pure override returns (string memory) {
-        return "hello world";
+        return "Subject :";
     }
 
     function Mint(address to, string memory uri) public {

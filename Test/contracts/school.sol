@@ -12,7 +12,6 @@ contract School is Ownable{
     uint public constant tax = 3;
     uint256 price = 1000;
     uint256 public numberoftokens;
-//  uint256 baseTermT;
     address private Owner;
     
     IERC20 token;
@@ -64,7 +63,6 @@ contract School is Ownable{
         bool registered;
     }
 
-    //Events
     event TeacherAdded(address indexed teacher);
     event CourseAdded(address indexed teacher,uint256 CourseID, string CourseName, uint256 price);
     event Enrolled(address indexed student, uint256 CourseID);
@@ -77,7 +75,7 @@ contract School is Ownable{
 
 
     function buyTokens() public payable {
-       // require(msg.value >= 1 ether, "Cannot buy less than 1 Ether");
+        require(msg.value != 0 ether, "Invalid Input");
         numberoftokens = msg.value * price;
         token.transferFrom(Owner,msg.sender,numberoftokens);     
         student[msg.sender] = true;  
@@ -85,6 +83,7 @@ contract School is Ownable{
     }   
 
     function addTeacher(address _address, string memory _name, uint256 _Id) public OnlyOwner{
+        require (_address != address (0), "Invalid Address");
         require(teachers[_address].registered == false, "Teacher already registered");
         teachers[_address] = Teacher(_name, _Id, true);
         emit TeacherAdded(_address);
@@ -93,6 +92,9 @@ contract School is Ownable{
     function addCourse(uint256 _courseID, string memory _courseName, address _teacher, uint256 _baseTermT, uint256 _baseprice) public isTeacher{
         require(courses[_courseID].courseregistered == false, "Course already registered");
         require(baseTermS<=100-_baseTermT,"Base term should be greater than school terms");
+        require (_teacher != address (0), "Invalid Address");
+        require (_baseprice != 0) ;
+        require (_baseTermT != 0) ;
         courses[_courseID] = Course(_courseID, _courseName, _teacher, true, _baseTermT, _baseprice);
         courseprice[_courseID] = calcCP(_baseprice, _baseTermT);
         cft.Mint(_teacher, _courseName); 
@@ -103,9 +105,8 @@ contract School is Ownable{
     function buyCourse(uint256 _courseId) public {
         require(courses[_courseId].courseregistered == true, "Not a valid course ID");
         require(token.balanceOf(msg.sender) >= courseprice[_courseId], "Not enough funds");
-        //require(balanceOf(msg.sender) >= courseprice, "Not enough tokens");
         token.transferFrom(msg.sender,address(Owner), courseprice[_courseId]);
-        t2.mint();
+        t2.mint(msg.sender);
         studentenroll[t2.counter()][_courseId]=msg.sender;
         emit Enrolled(msg.sender, _courseId);
     }
@@ -114,8 +115,8 @@ contract School is Ownable{
     function graduate(address _student , uint256 _courseid ) public isTeacher {
         require(student[_student] = true, "The address is not a student");
         require(studentenroll[t2.counter()][_courseid] == _student, "The student is not enrolled in this course");
-        Qctf.mint(msg.sender);
-        t2.burn();
+        Qctf.mint(_student);
+        t2.burn(_student);
         emit Graduated(_student, _courseid);
         
     }
@@ -138,10 +139,3 @@ contract School is Ownable{
          return courseprice[_ID];
     }
 }
-
-
-/*
-    //ERRORS THAT I'M WORKING ON
-    1) N/A
-
-    */
