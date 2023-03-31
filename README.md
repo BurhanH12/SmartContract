@@ -1,1 +1,2 @@
 # SmartContract
+Go to "Test"
